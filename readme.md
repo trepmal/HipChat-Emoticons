@@ -1,5 +1,7 @@
 # HipChat Emoticons
 
+Download [hipchat-emoticons.alfredworkflow](https://github.com/trepmal/HipChat-Emoticons/blob/master/hipchat-emoticons.alfredworkflow?raw=true)
+
 # Setup
 
 First, run `hipapi YOURAPIKEY` - this should be your HipChat API key (must have view_group scope).
