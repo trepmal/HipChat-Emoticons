@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>kdl-hipchat-emoticons</string>
+	<key>connections</key>
+	<dict>
+		<key>2D68B178-2D59-4E33-94F0-28FF276C71B5</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>D6929014-9636-4AC3-B063-578351E39700</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>53EC92C8-88F3-4E6C-8D21-85C383647950</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>75388AA3-31CF-41CE-BF91-B586612B5368</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>7DE03C46-D238-4A96-826A-0899F8D6FE88</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>2D68B178-2D59-4E33-94F0-28FF276C71B5</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>5F1B47C9-AE96-4D29-A245-605DECACF216</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Kailey Lampert</string>
+	<key>description</key>
+	<string></string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>HipChat Emoticons</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>53EC92C8-88F3-4E6C-8D21-85C383647950</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>127</integer>
+				<key>keyword</key>
+				<string>hc</string>
+				<key>queuedelaycustom</key>
+				<integer>1</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<false/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>script</key>
+				<string>require_once('extension_utils.php');
+$utils = new ExtensionUtils();
+require_once('list.php');
+
+$api_key = '1qUqpfiV0G3obTBmngkp8vno5mNbqbchHo6M8JTY';
+
+$q = '{query}';
+
+$results = array();
+
+if ( ! file_exists( 'emoticons.json' ) ) {
+	$results[] = array(
+		'title'    =&gt; "Please run 'hipupdate'",
+		'valid'    =&gt; '',
+		'uid'      =&gt; '',
+	);
+
+	echo $utils-&gt;toXml( $results );
+	die;
+}
+
+$json = file_get_contents( 'emoticons.json' );
+
+$json = json_decode( $json );
+$json = $json-&gt;items;
+
+$skipped = 0;
+foreach( $json as $emoticon ) {
+
+	if ( ! empty( $q ) &amp;&amp; strpos( $emoticon-&gt;shortcut, $q ) === false ) continue;
+
+	$filename = array_pop( explode( '/', $emoticon-&gt;url ) );
+
+	if ( ! file_exists( "ico/$filename" ) ) {
+		$skipped++;
+		continue;
+		//shell_exec( "cd ico/ &amp;&amp; curl -O '{$emoticon-&gt;url}'" );
+	}
+	$results[] = array(
+		'title'    =&gt; "{$emoticon-&gt;shortcut}",
+		'icon'     =&gt; "ico/$filename",
+		'valid'    =&gt; '',
+		'uid'      =&gt; '',
+		'subtitle' =&gt; "Copy to clipboard",
+		'arg'      =&gt; "({$emoticon-&gt;shortcut})"
+	);
+
+}
+
+if ( $skipped &gt; 0 ) {
+	$results[] = array(
+		'uid'       =&gt; -1,
+		'title'    =&gt; "You may be missing emoticons",
+		'subtitle' =&gt; "Run 'hipupdate' to update",
+	);
+}
+
+echo $utils-&gt;toXml( $results );
+</string>
+				<key>title</key>
+				<string>HipChat Emoticons</string>
+				<key>type</key>
+				<integer>1</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<true/>
+				<key>clipboardtext</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>75388AA3-31CF-41CE-BF91-B586612B5368</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>output</key>
+				<integer>2</integer>
+				<key>removeextension</key>
+				<false/>
+				<key>sticky</key>
+				<true/>
+				<key>text</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>D6929014-9636-4AC3-B063-578351E39700</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>100</integer>
+				<key>script</key>
+				<string>
+$api_key = '1qUqpfiV0G3obTBmngkp8vno5mNbqbchHo6M8JTY';
+
+$q = '{query}';
+
+$results = array();
+
+$json = shell_exec( 'curl -X GET -H "Content-type: application/json" -H "Authorization: Bearer '. $api_key .'" "https://api.hipchat.com/v2/emoticon?max-results=1000&amp;type=all"' );
+
+fwrite( fopen( 'emoticons.json', 'w' ), $json );
+
+
+$json = json_decode( $json );
+$json = $json-&gt;items;
+
+$counter = 0;
+foreach( $json as $emoticon ) {
+
+	$filename = array_pop( explode( '/', $emoticon-&gt;url ) );
+
+	if ( ! file_exists( "ico/$filename" ) ) {
+		shell_exec( "cd ico/ &amp;&amp; curl -O '{$emoticon-&gt;url}'" );
+		$counter++;
+	}
+
+}
+
+echo "Updated $counter item(s)";
+</string>
+				<key>type</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>2D68B178-2D59-4E33-94F0-28FF276C71B5</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>hipupdate</string>
+				<key>text</key>
+				<string>Update HipChat Emoticons</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>7DE03C46-D238-4A96-826A-0899F8D6FE88</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>output</key>
+				<integer>0</integer>
+				<key>removeextension</key>
+				<false/>
+				<key>sticky</key>
+				<false/>
+				<key>title</key>
+				<string>Starting</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>5F1B47C9-AE96-4D29-A245-605DECACF216</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>2D68B178-2D59-4E33-94F0-28FF276C71B5</key>
+		<dict>
+			<key>ypos</key>
+			<real>240</real>
+		</dict>
+		<key>53EC92C8-88F3-4E6C-8D21-85C383647950</key>
+		<dict>
+			<key>ypos</key>
+			<real>10</real>
+		</dict>
+		<key>5F1B47C9-AE96-4D29-A245-605DECACF216</key>
+		<dict>
+			<key>ypos</key>
+			<real>350</real>
+		</dict>
+		<key>75388AA3-31CF-41CE-BF91-B586612B5368</key>
+		<dict>
+			<key>ypos</key>
+			<real>120</real>
+		</dict>
+		<key>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</key>
+		<dict>
+			<key>ypos</key>
+			<real>60</real>
+		</dict>
+		<key>7DE03C46-D238-4A96-826A-0899F8D6FE88</key>
+		<dict>
+			<key>ypos</key>
+			<real>350</real>
+		</dict>
+		<key>D6929014-9636-4AC3-B063-578351E39700</key>
+		<dict>
+			<key>ypos</key>
+			<real>240</real>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string>trepmal.com/alfredapp</string>
+</dict>
+</plist>
