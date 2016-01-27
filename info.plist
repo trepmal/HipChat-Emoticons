@@ -55,6 +55,17 @@
 				<string></string>
 			</dict>
 		</array>
+		<key>A414EE6B-3E94-4C63-A032-0290B49CA990</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>7042CF67-DC18-4B6C-B13D-FAE38BACFA16</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Kailey Lampert</string>
@@ -226,12 +237,17 @@ $api_key = file_get_contents( 'apikey' );
 
 $q = '{query}';
 
-$json = shell_exec( 'curl -X GET -H "Content-type: application/json" -H "Authorization: Bearer '. $api_key .'" "https://api.hipchat.com/v2/emoticon?max-results=1000&amp;type=all"' );
-
-fwrite( fopen( 'emoticons.json', 'w' ), $json );
+$json = $jsonstring = shell_exec( 'curl -s -X GET -H "Content-type: application/json" -H "Authorization: Bearer '. $api_key .'" "https://api.hipchat.com/v2/emoticon?max-results=1000&amp;type=all"' );
 
 
 $json = json_decode( $json );
+
+if ( isset( $json-&gt;error ) ) {
+	die( "Error: {$json-&gt;error-&gt;code} [{$json-&gt;error-&gt;type}] {$json-&gt;error-&gt;message}" );
+} else {
+	fwrite( fopen( 'emoticons.json', 'w' ), $jsonstring );
+}
+
 $json = $json-&gt;items;
 
 $counter = 0;
@@ -300,6 +316,48 @@ echo "Updated $counter item(s)";
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>query="{query}"
+
+
+echo $query &gt; apikey
+</string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>7042CF67-DC18-4B6C-B13D-FAE38BACFA16</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>hipapi</string>
+				<key>text</key>
+				<string>HipChat API</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>A414EE6B-3E94-4C63-A032-0290B49CA990</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string></string>
@@ -320,6 +378,11 @@ echo "Updated $counter item(s)";
 			<key>ypos</key>
 			<real>350</real>
 		</dict>
+		<key>7042CF67-DC18-4B6C-B13D-FAE38BACFA16</key>
+		<dict>
+			<key>ypos</key>
+			<real>470</real>
+		</dict>
 		<key>75388AA3-31CF-41CE-BF91-B586612B5368</key>
 		<dict>
 			<key>ypos</key>
@@ -334,6 +397,11 @@ echo "Updated $counter item(s)";
 		<dict>
 			<key>ypos</key>
 			<real>350</real>
+		</dict>
+		<key>A414EE6B-3E94-4C63-A032-0290B49CA990</key>
+		<dict>
+			<key>ypos</key>
+			<real>470</real>
 		</dict>
 		<key>D6929014-9636-4AC3-B063-578351E39700</key>
 		<dict>
