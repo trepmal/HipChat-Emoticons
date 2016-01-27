@@ -101,9 +101,6 @@
 				<key>script</key>
 				<string>require_once('extension_utils.php');
 $utils = new ExtensionUtils();
-require_once('list.php');
-
-$api_key = '1qUqpfiV0G3obTBmngkp8vno5mNbqbchHo6M8JTY';
 
 $q = '{query}';
 
@@ -219,7 +216,7 @@ echo $utils-&gt;toXml( $results );
 				<integer>100</integer>
 				<key>script</key>
 				<string>
-$api_key = '1qUqpfiV0G3obTBmngkp8vno5mNbqbchHo6M8JTY';
+$api_key = 'APIKEYGOESHERE';
 
 $q = '{query}';
 
