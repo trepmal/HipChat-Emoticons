@@ -6,7 +6,7 @@ Download [hipchat-emoticons.alfredworkflow](https://github.com/trepmal/HipChat-E
 
 First, run `hipapi YOURAPIKEY` - this should be your HipChat API key (must have view_group scope).
 
-Then run `hipupdate` again to begin fetching icons. Please note this could take a while and may need to be run a few times depending on how many emoticons you have.
+Then run `hipupdate` to begin fetching icons. Please note this could take a while and may need to be run a few times depending on how many emoticons you have.
 
 You may run the command periodically to keep updating your workflow.
 
