@@ -46,14 +46,6 @@
 				<key>modifiersubtext</key>
 				<string></string>
 			</dict>
-			<dict>
-				<key>destinationuid</key>
-				<string>5F1B47C9-AE96-4D29-A245-605DECACF216</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-			</dict>
 		</array>
 		<key>A414EE6B-3E94-4C63-A032-0290B49CA990</key>
 		<array>
@@ -198,87 +190,6 @@ echo $utils-&gt;toXml( $results );
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<false/>
-				<key>output</key>
-				<integer>2</integer>
-				<key>removeextension</key>
-				<false/>
-				<key>sticky</key>
-				<true/>
-				<key>text</key>
-				<string>{query}</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>D6929014-9636-4AC3-B063-578351E39700</string>
-			<key>version</key>
-			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>100</integer>
-				<key>script</key>
-				<string>$results = array();
-
-if ( ! file_exists ( 'apikey' ) ) {
-	shell_exec( 'open .' );
-	die( "Please update your api key" );
-}
-
-$api_key = file_get_contents( 'apikey' );
-
-$q = '{query}';
-
-$json = $jsonstring = shell_exec( 'curl -s -X GET -H "Content-type: application/json" -H "Authorization: Bearer '. $api_key .'" "https://api.hipchat.com/v2/emoticon?max-results=1000&amp;type=all"' );
-
-
-$json = json_decode( $json );
-
-if ( isset( $json-&gt;error ) ) {
-	die( "Error: {$json-&gt;error-&gt;code} [{$json-&gt;error-&gt;type}] {$json-&gt;error-&gt;message}" );
-} else {
-	fwrite( fopen( 'emoticons.json', 'w' ), $jsonstring );
-}
-
-$json = $json-&gt;items;
-
-$counter = array();
-foreach( $json as $emoticon ) {
-
-	$filename = array_pop( explode( '/', $emoticon-&gt;url ) );
-
-	if ( ! file_exists( "ico/$filename" ) ) {
-		shell_exec( "cd ico/ &amp;&amp; curl -O '{$emoticon-&gt;url}'" );
-		$counter[] = $emoticon-&gt;shortcut;
-	}
-
-}
-
-$total = count( $counter );
-$list = implode( ', ', $counter );
-echo "Updated $total item(s)\n$list";
-</string>
-				<key>type</key>
-				<integer>1</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>2D68B178-2D59-4E33-94F0-28FF276C71B5</string>
-			<key>version</key>
-			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>argumenttype</key>
 				<integer>2</integer>
 				<key>keyword</key>
@@ -307,14 +218,82 @@ echo "Updated $total item(s)\n$list";
 				<key>removeextension</key>
 				<false/>
 				<key>sticky</key>
-				<false/>
+				<true/>
+				<key>text</key>
+				<string>{query}</string>
 				<key>title</key>
-				<string>Starting</string>
+				<string>HipChat Workflow Update</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
-			<string>5F1B47C9-AE96-4D29-A245-605DECACF216</string>
+			<string>D6929014-9636-4AC3-B063-578351E39700</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<true/>
+				<key>escaping</key>
+				<integer>100</integer>
+				<key>script</key>
+				<string>if ( ! file_exists ( 'apikey' ) ) {
+	shell_exec( 'open .' );
+	die( "Please update your api key" );
+}
+
+$api_key = file_get_contents( 'apikey' );
+
+$json = $jsonstring = shell_exec( 'curl -s -X GET -H "Content-type: application/json" -H "Authorization: Bearer '. $api_key .'" "https://api.hipchat.com/v2/emoticon?max-results=1000&amp;type=all"' );
+
+$json = json_decode( $json );
+
+if ( isset( $json-&gt;error ) ) {
+	die( "Error: {$json-&gt;error-&gt;code} [{$json-&gt;error-&gt;type}] {$json-&gt;error-&gt;message}" );
+} else {
+	fwrite( fopen( 'emoticons.json', 'w' ), $jsonstring );
+}
+
+$json = $json-&gt;items;
+
+
+$total = count( $json );
+$icons = shell_exec( 'ls -1 ico/ | wc -l' );
+
+$missing = $total - $icons;
+
+if ( $missing &lt; 1 ) {
+	die( "Up to date!" );
+}
+
+shell_exec( 'osascript -e \'display notification "Estimating '. $missing .' icon(s) to download" with title "Starting"\' ');
+
+
+$counter = array();
+foreach( $json as $emoticon ) {
+
+	$filename = array_pop( explode( '/', $emoticon-&gt;url ) );
+
+	if ( ! file_exists( "ico/$filename" ) ) {
+		shell_exec( "cd ico/ &amp;&amp; curl -s -O '{$emoticon-&gt;url}'" );
+		$counter[] = $emoticon-&gt;shortcut;
+	}
+
+}
+
+$total = count( $counter );
+$list = implode( ', ', $counter );
+echo "Updated $total item(s)\n$list";
+</string>
+				<key>type</key>
+				<integer>1</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>2D68B178-2D59-4E33-94F0-28FF276C71B5</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -375,15 +354,10 @@ echo $query &gt; apikey
 			<key>ypos</key>
 			<real>10</real>
 		</dict>
-		<key>5F1B47C9-AE96-4D29-A245-605DECACF216</key>
-		<dict>
-			<key>ypos</key>
-			<real>350</real>
-		</dict>
 		<key>7042CF67-DC18-4B6C-B13D-FAE38BACFA16</key>
 		<dict>
 			<key>ypos</key>
-			<real>470</real>
+			<real>390</real>
 		</dict>
 		<key>75388AA3-31CF-41CE-BF91-B586612B5368</key>
 		<dict>
@@ -398,12 +372,12 @@ echo $query &gt; apikey
 		<key>7DE03C46-D238-4A96-826A-0899F8D6FE88</key>
 		<dict>
 			<key>ypos</key>
-			<real>350</real>
+			<real>240</real>
 		</dict>
 		<key>A414EE6B-3E94-4C63-A032-0290B49CA990</key>
 		<dict>
 			<key>ypos</key>
-			<real>470</real>
+			<real>390</real>
 		</dict>
 		<key>D6929014-9636-4AC3-B063-578351E39700</key>
 		<dict>
