@@ -250,19 +250,21 @@ if ( isset( $json-&gt;error ) ) {
 
 $json = $json-&gt;items;
 
-$counter = 0;
+$counter = array();
 foreach( $json as $emoticon ) {
 
 	$filename = array_pop( explode( '/', $emoticon-&gt;url ) );
 
 	if ( ! file_exists( "ico/$filename" ) ) {
 		shell_exec( "cd ico/ &amp;&amp; curl -O '{$emoticon-&gt;url}'" );
-		$counter++;
+		$counter[] = $emoticon-&gt;shortcut;
 	}
 
 }
 
-echo "Updated $counter item(s)";
+$total = count( $counter );
+$list = implode( ', ', $counter );
+echo "Updated $total item(s)\n$list";
 </string>
 				<key>type</key>
 				<integer>1</integer>
