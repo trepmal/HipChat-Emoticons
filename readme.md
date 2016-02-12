@@ -13,4 +13,6 @@ You may run the command periodically to keep updating your workflow.
 # Usage
 Once you have your emoticons, `hc` will list all of them, and `hc {query}` will only show those that contain a match.
 
+By default, the regular action (hitting enter) will paste the shortcut immediately. Using the alt key modifier will simply copy it to your clipboard.
+
 ![screenshot](screenshot.png)

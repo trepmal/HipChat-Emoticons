@@ -21,15 +21,15 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>53EC92C8-88F3-4E6C-8D21-85C383647950</string>
+				<string>75388AA3-31CF-41CE-BF91-B586612B5368</string>
 				<key>modifiers</key>
 				<integer>524288</integer>
 				<key>modifiersubtext</key>
-				<string></string>
+				<string>Only copy to clipboard</string>
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>75388AA3-31CF-41CE-BF91-B586612B5368</string>
+				<string>53EC92C8-88F3-4E6C-8D21-85C383647950</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -80,7 +80,7 @@
 			<key>type</key>
 			<string>alfred.workflow.output.clipboard</string>
 			<key>uid</key>
-			<string>53EC92C8-88F3-4E6C-8D21-85C383647950</string>
+			<string>75388AA3-31CF-41CE-BF91-B586612B5368</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -142,7 +142,7 @@ foreach( $json as $emoticon ) {
 		'icon'     =&gt; "ico/$filename",
 		'valid'    =&gt; '',
 		'uid'      =&gt; '',
-		'subtitle' =&gt; "Copy to clipboard",
+		'subtitle' =&gt; "Copy to clipboard and paste",
 		'arg'      =&gt; "({$emoticon-&gt;shortcut})"
 	);
 
@@ -158,6 +158,8 @@ if ( $skipped &gt; 0 ) {
 
 echo $utils-&gt;toXml( $results );
 </string>
+				<key>subtext</key>
+				<string>Seach for an emoticon</string>
 				<key>title</key>
 				<string>HipChat Emoticons</string>
 				<key>type</key>
@@ -178,12 +180,12 @@ echo $utils-&gt;toXml( $results );
 				<key>autopaste</key>
 				<true/>
 				<key>clipboardtext</key>
-				<string></string>
+				<string>{query}</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.clipboard</string>
 			<key>uid</key>
-			<string>75388AA3-31CF-41CE-BF91-B586612B5368</string>
+			<string>53EC92C8-88F3-4E6C-8D21-85C383647950</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -417,7 +419,7 @@ echo $query &gt; apikey
 		<key>53EC92C8-88F3-4E6C-8D21-85C383647950</key>
 		<dict>
 			<key>ypos</key>
-			<real>10</real>
+			<real>120</real>
 		</dict>
 		<key>7042CF67-DC18-4B6C-B13D-FAE38BACFA16</key>
 		<dict>
@@ -427,7 +429,7 @@ echo $query &gt; apikey
 		<key>75388AA3-31CF-41CE-BF91-B586612B5368</key>
 		<dict>
 			<key>ypos</key>
-			<real>120</real>
+			<real>10</real>
 		</dict>
 		<key>78C200A9-C9F0-4EE7-98C7-5A10799FDC6E</key>
 		<dict>
