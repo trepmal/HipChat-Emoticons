@@ -191,9 +191,11 @@ echo $utils-&gt;toXml( $results );
 			<key>config</key>
 			<dict>
 				<key>argumenttype</key>
-				<integer>2</integer>
+				<integer>1</integer>
 				<key>keyword</key>
 				<string>hipupdate</string>
+				<key>subtext</key>
+				<string>Use the force (argument to check if you have extras)</string>
 				<key>text</key>
 				<string>Update HipChat Emoticons</string>
 				<key>withspace</key>
@@ -240,52 +242,100 @@ echo $utils-&gt;toXml( $results );
 				<integer>100</integer>
 				<key>script</key>
 				<string>if ( ! file_exists ( 'apikey' ) ) {
-	shell_exec( 'open .' );
-	die( "Please update your api key" );
+	die( "Please run `hipapi {apikey}` to update your api key" );
 }
+
+// optionally force update
+$force = ( trim("{query}") == 'force' ) ? true : false;
 
 $api_key = file_get_contents( 'apikey' );
 
+// get json of emoticons
 $json = $jsonstring = shell_exec( 'curl -s -X GET -H "Content-type: application/json" -H "Authorization: Bearer '. $api_key .'" "https://api.hipchat.com/v2/emoticon?max-results=1000&amp;type=all"' );
 
 $json = json_decode( $json );
 
+// check for error
 if ( isset( $json-&gt;error ) ) {
 	die( "Error: {$json-&gt;error-&gt;code} [{$json-&gt;error-&gt;type}] {$json-&gt;error-&gt;message}" );
+// else cache it for later
 } else {
 	fwrite( fopen( 'emoticons.json', 'w' ), $jsonstring );
 }
 
+// reduce
 $json = $json-&gt;items;
 
-
+// how many icons *should* we have
 $total = count( $json );
-$icons = shell_exec( 'ls -1 ico/ | wc -l' );
+// how many icosn *do* we have
+$icons = intval( shell_exec( 'ls -1 ico/ | wc -l' ) );
+--$icons; // readme.md
 
+// missing any?
 $missing = $total - $icons;
 
-if ( $missing &lt; 1 ) {
+// unless we force-check, assume that missing=0 means we're good
+if ( $missing == 0 &amp;&amp; ! $force ) {
 	die( "Up to date!" );
 }
+// if missing is a negative number, that means we have more than we should. probably a deletion in hipchat
+if ( $missing &lt; 0 &amp;&amp; ! $force ) {
+	die( "We might have an extra icon" );
+}
 
+// notify that we've begun
 shell_exec( 'osascript -e \'display notification "Estimating '. $missing .' icon(s) to download" with title "Starting"\' ');
 
+// trackers
+$newicons = array();
+$emoticons = array();
 
-$counter = array();
 foreach( $json as $emoticon ) {
 
 	$filename = array_pop( explode( '/', $emoticon-&gt;url ) );
 
+	// compile a list of all emoticons
+	$emoticons[] = $filename;
+
 	if ( ! file_exists( "ico/$filename" ) ) {
 		shell_exec( "cd ico/ &amp;&amp; curl -s -O '{$emoticon-&gt;url}'" );
-		$counter[] = $emoticon-&gt;shortcut;
+		// compile a list of downloaded emoticons
+		$newicons[] = $emoticon-&gt;shortcut;
 	}
 
 }
 
-$total = count( $counter );
-$list = implode( ', ', $counter );
-echo "Updated $total item(s)\n$list";
+$removedicons = 0;
+
+// if we've force-checked
+if ( $force ) {
+	// get list of icons on disk
+	$files = explode( "\n", shell_exec( "cd ico/ &amp;&amp; ls -1 | grep -v 'readme.md'" ) );
+	$files = array_filter( $files );
+
+	// diff against json list to see what's extra
+	$extras = array_diff( $files, $emoticons );
+	$removedicons = count( $extras );
+	$extras = implode( ' ', $extras );
+
+	// delete extras
+	shell_exec( 'cd ico/ &amp;&amp; rm '. $extras );
+}
+
+// let us know!
+$total = count( $newicons );
+$list = implode( ', ', $newicons );
+
+if ( ! $total &amp;&amp; ! $removedicons ) {
+	die( 'Up to date!' );
+}
+
+$s = ( 1 == $removedicons ) ? '' : 's';
+$rem = $removedicons ? "Removed $removedicons icon$s." : '';
+
+$s = ( 1 == $total ) ? '' : 's';
+echo "Added $total icon$s. $rem\n$list";
 </string>
 				<key>type</key>
 				<integer>1</integer>
@@ -294,6 +344,21 @@ echo "Updated $total item(s)\n$list";
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
 			<string>2D68B178-2D59-4E33-94F0-28FF276C71B5</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>78C200A9-C9F0-4EE7-98C7-5A10799FDC6E</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -363,6 +428,11 @@ echo $query &gt; apikey
 		<dict>
 			<key>ypos</key>
 			<real>120</real>
+		</dict>
+		<key>78C200A9-C9F0-4EE7-98C7-5A10799FDC6E</key>
+		<dict>
+			<key>ypos</key>
+			<real>360</real>
 		</dict>
 		<key>7DD3BDE5-A157-42E5-9376-F681FB50A4EE</key>
 		<dict>
